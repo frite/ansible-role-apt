@@ -1,0 +1,43 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  tasks:
+  - name: Gather installed packages
+    package_facts:
+      manager: auto
+
+  - name: Assert packages are installed
+    assert:
+      that: "item in ansible_facts.packages"
+    with_items:
+      - unattended-upgrades
+      - aptitude
+      - mailutils
+
+  - name: Get apt periodic conf file
+    stat:
+      path: /etc/apt/apt.conf.d/10periodic
+      checksum_algorithm: md5
+      get_checksum: true
+    register: periodic_result
+
+  - name: Assert apt periodic conf file is right
+    assert:
+      that: periodic_result.stat.exists is true and
+        periodic_result.stat.checksum == '1103d52be6cff6aa7f0a4d7189760678'
+        and periodic_result.stat.mode == '0644'
+
+  - name: Get apt unattended upgrades conf file
+    stat:
+      path: /etc/apt/apt.conf.d/50unattended-upgrades
+      checksum_algorithm: md5
+      get_checksum: true
+    register: periodic_result
+
+  - name: Assert apt unattended upgrades conf file is right
+    assert:
+      that: periodic_result.stat.exists is true and
+        periodic_result.stat.checksum == '3243327ca697bc39f444bc4548dddc57'
+        and periodic_result.stat.mode == '0644'

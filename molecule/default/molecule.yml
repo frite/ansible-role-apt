@@ -1,0 +1,26 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint: |
+   yamllint .
+   ansible-lint .
+platforms:
+  - name: instance
+    image: docker.io/pycontribs/ubuntu
+    pre_build_image: true
+provisioner:
+  name: ansible
+  inventory:
+    hosts:
+      all:
+        vars:
+          apt_admin_email: test@email.com
+verifier:
+  name: ansible
+  inventory:
+    hosts:
+      all:
+        vars:
+          apt_admin_email: test@email.com
