@@ -39,4 +39,4 @@
   - name: Assert apt unattended upgrades conf file is right
     assert:
       that: periodic_result.stat.exists is true and
-        and periodic_result.stat.mode == '0644'
+        periodic_result.stat.mode == '0644'
